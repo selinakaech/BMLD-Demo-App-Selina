@@ -1,7 +1,7 @@
 import streamlit as st
 
-# Dictionary with molar masses of elements in the periodic table
-molar_masses = {
+# Dictionary of elements and their molar masses
+elements = {
     'H': 1.008, 'He': 4.0026, 'Li': 6.94, 'Be': 9.0122, 'B': 10.81, 'C': 12.011, 'N': 14.007, 'O': 15.999, 'F': 18.998, 'Ne': 20.180,
     'Na': 22.990, 'Mg': 24.305, 'Al': 26.982, 'Si': 28.085, 'P': 30.974, 'S': 32.06, 'Cl': 35.45, 'Ar': 39.948, 'K': 39.098, 'Ca': 40.078,
     'Sc': 44.956, 'Ti': 47.867, 'V': 50.942, 'Cr': 51.996, 'Mn': 54.938, 'Fe': 55.845, 'Co': 58.933, 'Ni': 58.693, 'Cu': 63.546, 'Zn': 65.38,
@@ -15,11 +15,14 @@ molar_masses = {
     'Ds': 281, 'Rg': 282, 'Cn': 285, 'Nh': 286, 'Fl': 289, 'Mc': 290, 'Lv': 293, 'Ts': 294, 'Og': 294
 }
 
-def get_molar_mass(element):
-    """Returns the molar mass of the given element."""
-    return molar_masses.get(element, "Element not found")
+st.title('Molmassenrechner')
 
-if __name__ == "__main__":
-    element = input("Enter the symbol of the element: ")
-    molar_mass = get_molar_mass(element)
-    print(f"The molar mass of {element} is: {molar_mass}")
+element_symbol = st.text_input('Geben Sie das Elementsymbol ein:')
+
+if element_symbol:
+    element_symbol = element_symbol.capitalize()
+    if element_symbol in elements:
+        molar_mass = elements[element_symbol]
+        st.write(f'Die Molmasse von {element_symbol} ist {molar_mass} g/mol.')
+    else:
+        st.write('Ungültiges Elementsymbol. Bitte geben Sie ein gültiges Elementsymbol ein.')
