@@ -1,3 +1,5 @@
+import streamlit as st
+
 def calculate_concentration(absorbance, dilution_factor, path_length, molar_absorptivity):
     """
     Calculate the concentration of a sample using the Lambert-Beer law.
@@ -13,11 +15,13 @@ def calculate_concentration(absorbance, dilution_factor, path_length, molar_abso
     concentration = absorbance / (molar_absorptivity * path_length)
     return concentration * dilution_factor
 
-# Example usage
-absorbance = float(input("Enter the absorbance: "))
-dilution_factor = float(input("Enter the dilution factor: "))
-path_length = float(input("Enter the path length of the cuvette (cm): "))
-molar_absorptivity = float(input("Enter the molar absorptivity coefficient (L/(mol*cm)): "))
+st.title('UV-Vis Berechner')
 
-concentration = calculate_concentration(absorbance, dilution_factor, path_length, molar_absorptivity)
-print(f"The concentration of the sample is {concentration} mol/L")
+absorbance = st.number_input('Geben Sie die Absorption ein:', min_value=0.0, step=0.01)
+dilution_factor = st.number_input('Geben Sie den Verdünnungsfaktor ein:', min_value=1.0, step=0.1)
+path_length = st.number_input('Geben Sie die Weglänge der Küvette (cm) ein:', min_value=0.1, step=0.1)
+molar_absorptivity = st.number_input('Geben Sie den molaren Absorptionskoeffizienten (L/(mol*cm)) ein:', min_value=0.1, step=0.1)
+
+if st.button('Berechnen'):
+    concentration = calculate_concentration(absorbance, dilution_factor, path_length, molar_absorptivity)
+    st.write(f'Die Konzentration der Probe beträgt {concentration} mol/L')
