@@ -13,6 +13,6 @@ page = st.sidebar.radio("Gehe zu", ["Startseite", "Molmassenrechner", "Verdünnu
 if page == "Startseite":
     st.write("Willkommen auf der Startseite!")
 elif page == "Molmassenrechner":
-    import pages.Molmassenrechner
+    import pages.Stoffmengenrechner
 elif page == "Verdünnungsrechner":
     import pages.Verdünnungsrechner
