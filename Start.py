@@ -8,11 +8,13 @@ st.write("E-Mail Adresse: kaechsel@students.zhaw.ch")
 
 # Sidebar navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Gehe zu", ["Startseite", "Molmassenrechner", "Verdünnungsrechner"])
+page = st.sidebar.radio("Gehe zu", ["Startseite", "Molmassenrechner", "Verdünnungsrechner", "Multiplikationsrechner"])
 
 if page == "Startseite":
     st.write("Willkommen auf der Startseite!")
-elif page == "Molmassenrechner":
-    import pages.Stoffmengenrechner
 elif page == "Verdünnungsrechner":
     import pages.Verdünnungsrechner
+    pages.Verdünnungsrechner.main()
+elif page == "Multiplikationsrechner":
+    import pages.Multiplikationsrechner
+    pages.Multiplikationsrechner.main()
