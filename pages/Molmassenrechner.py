@@ -1,4 +1,4 @@
-# Molmassenrechner.py
+import streamlit as st
 
 # Dictionary with molar masses of elements in the periodic table
 molar_masses = {
