@@ -1,4 +1,8 @@
 import streamlit as st
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
 
 def calculate_concentration(absorbance, dilution_factor, path_length, molar_absorptivity):
     """
@@ -25,3 +29,38 @@ molar_absorptivity = st.number_input('Geben Sie den molaren Absorptionskoeffizie
 if st.button('Berechnen'):
     concentration = calculate_concentration(absorbance, dilution_factor, path_length, molar_absorptivity)
     st.write(f'Die Konzentration der Probe beträgt {concentration} mol/L')
+
+# Kalibrationsdaten eingeben
+st.write("Kalibrationsdaten eingeben:")
+num_points = st.number_input('Anzahl der Kalibrationspunkte:', min_value=2, step=1, value=5)
+
+calibration_data = []
+for i in range(num_points):
+    cal_absorbance = st.number_input(f'Absorption Punkt {i+1}:', min_value=0.0, step=0.01, key=f'abs_{i}')
+    cal_concentration = st.number_input(f'Konzentration Punkt {i+1} (mol/L):', min_value=0.0, step=0.01, key=f'conc_{i}')
+    calibration_data.append((cal_absorbance, cal_concentration))
+
+if st.button('Kalibrationsgerade erstellen'):
+    if len(calibration_data) >= 2:
+        df = pd.DataFrame(calibration_data, columns=['Absorption', 'Konzentration'])
+        X = df['Konzentration'].values.reshape(-1, 1)
+        y = df['Absorption'].values
+
+        model = LinearRegression()
+        model.fit(X, y)
+        slope = model.coef_[0]
+        intercept = model.intercept_
+
+        st.write(f'Kalibrationsgerade: Absorption = {slope:.4f} * Konzentration + {intercept:.4f}')
+
+        # Plot der Kalibrationsgerade
+        plt.figure(figsize=(10, 6))
+        plt.scatter(df['Konzentration'], df['Absorption'], color='blue', label='Kalibrationspunkte')
+        plt.plot(df['Konzentration'], model.predict(X), color='red', label='Kalibrationsgerade')
+        plt.xlabel('Konzentration (mol/L)')
+        plt.ylabel('Absorption')
+        plt.title('Kalibrationsgerade')
+        plt.legend()
+        st.pyplot(plt)
+    else:
+        st.write('Bitte geben Sie mindestens zwei Kalibrationspunkte ein.')
