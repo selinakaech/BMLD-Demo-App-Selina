@@ -22,6 +22,7 @@ st.title('Molmassenrechner')
 
 with st.form(key='element_form'):
     compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
+    multiplier = st.number_input('Geben Sie einen Multiplikator ein:', min_value=1, value=1)
     submit_button = st.form_submit_button(label='Berechnen')
 
 if submit_button:
@@ -35,22 +36,22 @@ if submit_button:
                 parsed.append((element, count))
             return parsed
 
-        def calculate_molar_mass(compound):
+        def calculate_molar_mass(compound, multiplier):
             parsed_compound = parse_compound(compound)
             total_mass = 0
             element_masses = []
             for element, count in parsed_compound:
                 if element in elements:
-                    element_mass = elements[element] * count
+                    element_mass = elements[element] * count * multiplier
                     total_mass += element_mass
                     element_masses.append((element, element_mass))
                 else:
                     return None, None
             return total_mass, element_masses
 
-        molar_mass, element_masses = calculate_molar_mass(compound)
+        molar_mass, element_masses = calculate_molar_mass(compound, multiplier)
         if molar_mass is not None:
-            st.write(f'Die Molmasse der Verbindung {compound} ist {molar_mass} g/mol.')
+            st.write(f'Die Molmasse der Verbindung {compound} multipliziert mit {multiplier} ist {molar_mass} g/mol.')
 
             # Create a DataFrame for the bar chart
             df = pd.DataFrame(element_masses, columns=['Element', 'Masse'])
@@ -63,3 +64,7 @@ if submit_button:
             st.altair_chart(chart, use_container_width=True)
         else:
             st.write('Ungültige chemische Verbindung. Bitte geben Sie eine gültige Verbindung ein.')
+
+# Add a reset button to clear the input fields
+if st.button('Zurücksetzen'):
+    st.experimental_rerun()
