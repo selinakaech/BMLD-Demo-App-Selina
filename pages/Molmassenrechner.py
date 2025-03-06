@@ -22,7 +22,7 @@ st.title('Molmassenrechner')
 
 with st.form(key='element_form'):
     compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
-    multiplier = st.number_input('Geben Sie einen Multiplikator ein:', min_value=1, value=1)
+    multiplier = st.number_input('Geben Sie die entsprechende Menge der chemischen Verbindung ein:', min_value=1, value=1)
     submit_button = st.form_submit_button(label='Berechnen')
 
 if submit_button:
