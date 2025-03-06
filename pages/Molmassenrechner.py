@@ -1,5 +1,7 @@
 import streamlit as st
 import re
+import pandas as pd
+import altair as alt
 
 # Dictionary of elements and their molar masses
 elements = {
@@ -16,44 +18,13 @@ elements = {
     'Ds': 281, 'Rg': 282, 'Cn': 285, 'Nh': 286, 'Fl': 289, 'Mc': 290, 'Lv': 293, 'Ts': 294, 'Og': 294
 }
 
-# Dictionary of elements and their electronegativities
-electronegativities = {
-    'H': 2.20, 'He': None, 'Li': 0.98, 'Be': 1.57, 'B': 2.04, 'C': 2.55, 'N': 3.04, 'O': 3.44, 'F': 3.98, 'Ne': None,
-    'Na': 0.93, 'Mg': 1.31, 'Al': 1.61, 'Si': 1.90, 'P': 2.19, 'S': 2.58, 'Cl': 3.16, 'Ar': None, 'K': 0.82, 'Ca': 1.00,
-    'Sc': 1.36, 'Ti': 1.54, 'V': 1.63, 'Cr': 1.66, 'Mn': 1.55, 'Fe': 1.83, 'Co': 1.88, 'Ni': 1.91, 'Cu': 1.90, 'Zn': 1.65,
-    'Ga': 1.81, 'Ge': 2.01, 'As': 2.18, 'Se': 2.55, 'Br': 2.96, 'Kr': 3.00, 'Rb': 0.82, 'Sr': 0.95, 'Y': 1.22, 'Zr': 1.33,
-    'Nb': 1.6, 'Mo': 2.16, 'Tc': 1.9, 'Ru': 2.2, 'Rh': 2.28, 'Pd': 2.20, 'Ag': 1.93, 'Cd': 1.69, 'In': 1.78, 'Sn': 1.96,
-    'Sb': 2.05, 'Te': 2.1, 'I': 2.66, 'Xe': 2.6, 'Cs': 0.79, 'Ba': 0.89, 'La': 1.10, 'Ce': 1.12, 'Pr': 1.13, 'Nd': 1.14,
-    'Pm': 1.13, 'Sm': 1.17, 'Eu': 1.00, 'Gd': 1.20, 'Tb': 1.10, 'Dy': 1.22, 'Ho': 1.23, 'Er': 1.24, 'Tm': 1.25, 'Yb': 1.10,
-    'Lu': 1.27, 'Hf': 1.3, 'Ta': 1.5, 'W': 2.36, 'Re': 1.9, 'Os': 2.2, 'Ir': 2.20, 'Pt': 2.28, 'Au': 2.54, 'Hg': 2.00,
-    'Tl': 1.62, 'Pb': 2.33, 'Bi': 2.02, 'Th': 1.3, 'Pa': 1.5, 'U': 1.38, 'Np': 1.36, 'Pu': 1.28, 'Am': 1.13, 'Cm': 1.28,
-    'Bk': 1.3, 'Cf': 1.3, 'Es': 1.3, 'Fm': 1.3, 'Md': 1.3, 'No': 1.3, 'Lr': 1.3, 'Rf': None, 'Db': None, 'Sg': None, 'Bh': None,
-    'Hs': None, 'Mt': None, 'Ds': None, 'Rg': None, 'Cn': None, 'Nh': None, 'Fl': None, 'Mc': None, 'Lv': None, 'Ts': None, 'Og': None
-}
-
 st.title('Molmassenrechner')
 
 with st.form(key='element_form'):
-    element_symbol = st.text_input('Geben Sie das Elementsymbol ein:')
     compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
     submit_button = st.form_submit_button(label='Berechnen')
 
 if submit_button:
-    if element_symbol:
-        element_symbol = element_symbol.capitalize()
-        if element_symbol in elements:
-            molar_mass = elements[element_symbol]
-            st.write(f'Die Molmasse von {element_symbol} ist {molar_mass} g/mol.')
-        else:
-            st.write('Ungültiges Elementsymbol. Bitte geben Sie ein gültiges Elementsymbol ein.')
-
-        if element_symbol in electronegativities:
-            electronegativity = electronegativities[element_symbol]
-            if electronegativity is not None:
-                st.write(f'Die Elektronegativität von {element_symbol} ist {electronegativity}.')
-            else:
-                st.write(f'Die Elektronegativität von {element_symbol} ist nicht verfügbar.')
-
     if compound:
         def parse_compound(compound):
             pattern = r'([A-Z][a-z]*)(\d*)'
@@ -67,15 +38,28 @@ if submit_button:
         def calculate_molar_mass(compound):
             parsed_compound = parse_compound(compound)
             total_mass = 0
+            element_masses = []
             for element, count in parsed_compound:
                 if element in elements:
-                    total_mass += elements[element] * count
+                    element_mass = elements[element] * count
+                    total_mass += element_mass
+                    element_masses.append((element, element_mass))
                 else:
-                    return None
-            return total_mass
+                    return None, None
+            return total_mass, element_masses
 
-        molar_mass = calculate_molar_mass(compound)
+        molar_mass, element_masses = calculate_molar_mass(compound)
         if molar_mass is not None:
             st.write(f'Die Molmasse der Verbindung {compound} ist {molar_mass} g/mol.')
+
+            # Create a DataFrame for the bar chart
+            df = pd.DataFrame(element_masses, columns=['Element', 'Masse'])
+            chart = alt.Chart(df).mark_bar().encode(
+                x='Element',
+                y='Masse'
+            ).properties(
+                title='Molmasse der Elemente in der Verbindung'
+            )
+            st.altair_chart(chart, use_container_width=True)
         else:
             st.write('Ungültige chemische Verbindung. Bitte geben Sie eine gültige Verbindung ein.')
