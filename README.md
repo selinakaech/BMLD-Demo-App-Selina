@@ -1,3 +1,3 @@
 # BMLD-Inf2-AppV0
 
-Das leere Gerüst um eine App aufzubauen.
+Link der App: https://bmld-demo-app-selina-8hmwmdnziwbvrx2jnjw5tn.streamlit.app/

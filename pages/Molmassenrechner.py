@@ -33,47 +33,49 @@ electronegativities = {
 
 st.title('Molmassenrechner')
 
-element_symbol = st.text_input('Geben Sie das Elementsymbol ein:')
+with st.form(key='element_form'):
+    element_symbol = st.text_input('Geben Sie das Elementsymbol ein:')
+    compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
+    submit_button = st.form_submit_button(label='Berechnen')
 
-if element_symbol:
-    element_symbol = element_symbol.capitalize()
-    if element_symbol in elements:
-        molar_mass = elements[element_symbol]
-        st.write(f'Die Molmasse von {element_symbol} ist {molar_mass} g/mol.')
-    else:
-        st.write('Ungültiges Elementsymbol. Bitte geben Sie ein gültiges Elementsymbol ein.')
-
-if element_symbol in electronegativities:
-    electronegativity = electronegativities[element_symbol]
-    if electronegativity is not None:
-        st.write(f'Die Elektronegativität von {element_symbol} ist {electronegativity}.')
-    else:
-        st.write(f'Die Elektronegativität von {element_symbol} ist nicht verfügbar.')
-
-compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
-
-def parse_compound(compound):
-    pattern = r'([A-Z][a-z]*)(\d*)'
-    matches = re.findall(pattern, compound)
-    parsed = []
-    for (element, count) in matches:
-        count = int(count) if count else 1
-        parsed.append((element, count))
-    return parsed
-
-def calculate_molar_mass(compound):
-    parsed_compound = parse_compound(compound)
-    total_mass = 0
-    for element, count in parsed_compound:
-        if element in elements:
-            total_mass += elements[element] * count
+if submit_button:
+    if element_symbol:
+        element_symbol = element_symbol.capitalize()
+        if element_symbol in elements:
+            molar_mass = elements[element_symbol]
+            st.write(f'Die Molmasse von {element_symbol} ist {molar_mass} g/mol.')
         else:
-            return None
-    return total_mass
+            st.write('Ungültiges Elementsymbol. Bitte geben Sie ein gültiges Elementsymbol ein.')
 
-if compound:
-    molar_mass = calculate_molar_mass(compound)
-    if molar_mass is not None:
-        st.write(f'Die Molmasse der Verbindung {compound} ist {molar_mass} g/mol.')
-    else:
-        st.write('Ungültige chemische Verbindung. Bitte geben Sie eine gültige Verbindung ein.')
+        if element_symbol in electronegativities:
+            electronegativity = electronegativities[element_symbol]
+            if electronegativity is not None:
+                st.write(f'Die Elektronegativität von {element_symbol} ist {electronegativity}.')
+            else:
+                st.write(f'Die Elektronegativität von {element_symbol} ist nicht verfügbar.')
+
+    if compound:
+        def parse_compound(compound):
+            pattern = r'([A-Z][a-z]*)(\d*)'
+            matches = re.findall(pattern, compound)
+            parsed = []
+            for (element, count) in matches:
+                count = int(count) if count else 1
+                parsed.append((element, count))
+            return parsed
+
+        def calculate_molar_mass(compound):
+            parsed_compound = parse_compound(compound)
+            total_mass = 0
+            for element, count in parsed_compound:
+                if element in elements:
+                    total_mass += elements[element] * count
+                else:
+                    return None
+            return total_mass
+
+        molar_mass = calculate_molar_mass(compound)
+        if molar_mass is not None:
+            st.write(f'Die Molmasse der Verbindung {compound} ist {molar_mass} g/mol.')
+        else:
+            st.write('Ungültige chemische Verbindung. Bitte geben Sie eine gültige Verbindung ein.')
