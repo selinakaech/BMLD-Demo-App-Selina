@@ -1,13 +1,19 @@
 import streamlit as st
 import pandas as pd
-from utils.data_manager import DataManager
 
-st.title('Molmassendaten')
+class DataManager:
+    def __init__(self):
+        if 'data_df' not in st.session_state:
+            st.session_state['data_df'] = pd.DataFrame()
 
-# Load data from session state
-data_df = DataManager().get_data(session_state_key='data_df')
+    def append_record(self, session_state_key, record_dict):
+        if session_state_key in st.session_state:
+            st.session_state[session_state_key] = st.session_state[session_state_key].append(record_dict, ignore_index=True)
+        else:
+            st.session_state[session_state_key] = pd.DataFrame([record_dict])
 
-if data_df is not None:
-    st.write(data_df)
-else:
-    st.write("Keine Daten verfügbar.")
+    def get_data(self, session_state_key):
+        if session_state_key in st.session_state:
+            return st.session_state[session_state_key]
+        else:
+            return None

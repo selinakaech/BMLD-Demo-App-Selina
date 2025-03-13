@@ -6,6 +6,10 @@ from utils.data_manager import DataManager
 
 st.title('Molmassenrechner')
 
+# Initialize the session state key if it doesn't exist
+if 'data_df' not in st.session_state:
+    st.session_state['data_df'] = pd.DataFrame()
+
 with st.form(key='element_form'):
     compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
     multiplier = st.number_input('Geben Sie die entsprechende Menge der chemischen Verbindung ein:', min_value=1, value=1)
