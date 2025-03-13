@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import altair as alt
 from functions.Molmassen_Calculator import create_result_dict
 from utils.data_manager import DataManager
 
@@ -33,4 +34,4 @@ if st.button('Zurücksetzen'):
     st.experimental_rerun()
 
 # update data in session state and save to persistent storage
-DataManager().append_record(session_state_key='data_df', record_dict=result)port DataManager
+DataManager().append_record(session_state_key='data_df', record_dict=result)
