@@ -1,10 +1,5 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
-from functions.Molmassen-Calculator import create_result_dict
-from utils.data_manager imimport streamlit as st
-import pandas as pd
-import altair as alt
 from functions.Molmassen_Calculator import create_result_dict
 from utils.data_manager import DataManager
 
