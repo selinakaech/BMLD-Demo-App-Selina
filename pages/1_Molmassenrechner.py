@@ -33,8 +33,7 @@ if submit_button:
         else:
             st.write(result['error'])
 
-        # update data in session state and save to persistent storage
-        DataManager().append_record(session_state_key='data_df', record_dict=result)
+        
 
 # Add a reset button to clear the input fieldss
 if st.button('Zurücksetzen'):
