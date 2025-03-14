@@ -19,7 +19,7 @@ if data_df.empty:
     st.stop()
 
 # Überprüfe und bereinige die Daten
-required_columns = ['timestamp', 'molmass', 'weight', 'height']
+required_columns = ['timestamp', 'element', 'mass']
 missing_columns = [col for col in required_columns if col not in data_df.columns]
 
 if missing_columns:
@@ -27,9 +27,7 @@ if missing_columns:
     st.stop()
 
 data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
-data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
-data_df['weight'] = pd.to_numeric(data_df['weight'], errors='coerce')
-data_df['height'] = pd.to_numeric(data_df['height'], errors='coerce')
+data_df['mass'] = pd.to_numeric(data_df['mass'], errors='coerce')
 
 # Entferne Zeilen mit ungültigen Daten
 data_df = data_df.dropna(subset=required_columns)
@@ -41,9 +39,9 @@ data_df = data_df.sort_values('timestamp', ascending=False)
 st.dataframe(data_df)
 
 # Histogramm der Molmassenverteilung
-if 'molmass' in data_df.columns:
+if 'mass' in data_df.columns:
     st.subheader('Verteilung der Molmassen')
-    st.bar_chart(data_df['molmass'])   # create a bar chart
+    st.bar_chart(data_df['mass'])   # create a bar chart
     st.caption('Molmasse (g/mol)')
 else:
-    st.error('Die Spalte "molmass" fehlt in den Daten.')
+    st.error('Die Spalte "mass" fehlt in den Daten.')
