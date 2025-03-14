@@ -5,50 +5,37 @@ LoginManager().go_to_login('Start.py')
 
 import streamlit as st
 import pandas as pd
-import altair as alt
-from functions.Molmassen_Calculator import create_result_dict
-from utils.data_manager import DataManager
 
-st.title('Molmassenrechner')
+st.title('Molmassenwerte')
 
-# Initialize the session state key if it doesn't exist
+# Überprüfen, ob die Daten im Session-State vorhanden sind
 if 'data_df' not in st.session_state:
-    st.session_state['data_df'] = pd.DataFrame(columns=['timestamp', 'molmass', 'weight', 'height'])
+    st.error('Daten nicht gefunden. Bitte laden Sie die Daten auf der Startseite.')
+    st.stop()
 
-with st.form(key='element_form'):
-    compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
-    multiplier = st.number_input('Geben Sie die entsprechende Menge der chemischen Verbindung ein:', min_value=1, value=1)
-    weight = st.number_input('Geben Sie das Gewicht ein (kg):', min_value=0.0, value=0.0)
-    height = st.number_input('Geben Sie die Größe ein (m):', min_value=0.0, value=0.0)
-    submit_button = st.form_submit_button(label='Berechnen')
+data_df = st.session_state['data_df']
+if data_df.empty:
+    st.info('Keine Molmassen vorhanden. Berechnen Sie Ihre Molmasse auf der Startseite.')
+    st.stop()
 
-if submit_button:
-    if compound:
-        result = create_result_dict(compound, multiplier)
-        if 'error' not in result:
-            st.write(f'Die Molmasse der Verbindung {compound} multipliziert mit {multiplier} ist {result["molar_mass"]} g/mol.')
+# Überprüfe und bereinige die Daten
+required_columns = ['timestamp', 'molmass', 'weight', 'height']
+missing_columns = [col for col in required_columns if col not in data_df.columns]
 
-            # Create a DataFrame for the bar chart
-            df = pd.DataFrame(result['element_masses'], columns=['Element', 'Masse'])
-            chart = alt.Chart(df).mark_bar().encode(
-                x='Element',
-                y='Masse'
-            ).properties(
-                title='Molmasse der Elemente in der Verbindung'
-            )
-            st.altair_chart(chart, use_container_width=True)
+if missing_columns:
+    st.error(f'Die folgenden Spalten fehlen in den Daten: {", ".join(missing_columns)}')
+    st.stop()
 
-            # Speichere die berechneten Daten im Session-State
-            new_record = {
-                'timestamp': pd.Timestamp.now(),
-                'molmass': result['molar_mass'],
-                'weight': weight,
-                'height': height
-            }
-            st.session_state['data_df'] = st.session_state['data_df'].append(new_record, ignore_index=True)
-        else:
-            st.write(result['error'])
+data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
+data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
+data_df['weight'] = pd.to_numeric(data_df['weight'], errors='coerce')
+data_df['height'] = pd.to_numeric(data_df['height'], errors='coerce')
 
-# Add a reset button to clear the input fields
-if st.button('Zurücksetzen'):
-    st.experimental_rerun()
+# Entferne Zeilen mit ungültigen Daten
+data_df = data_df.dropna(subset=required_columns)
+
+# Sort dataframe by timestamp
+data_df = data_df.sort_values('timestamp', ascending=False)
+
+# Display table
+st.dataframe(data_df)
