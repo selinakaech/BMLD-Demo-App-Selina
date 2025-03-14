@@ -14,8 +14,17 @@ if data_df.empty:
     st.stop()
 
 # Überprüfe und bereinige die Daten
-data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
-data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
+if 'timestamp' in data_df.columns:
+    data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
+else:
+    st.error('Die Spalte "timestamp" fehlt in den Daten.')
+    st.stop()
+
+if 'molmass' in data_df.columns:
+    data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
+else:
+    st.error('Die Spalte "molmass" fehlt in den Daten.')
+    st.stop()
 
 # Entferne Zeilen mit ungültigen Daten
 data_df = data_df.dropna(subset=['timestamp', 'molmass'])
