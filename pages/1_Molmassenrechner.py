@@ -13,11 +13,13 @@ st.title('Molmassenrechner')
 
 # Initialize the session state key if it doesn't exist
 if 'data_df' not in st.session_state:
-    st.session_state['data_df'] = pd.DataFrame()
+    st.session_state['data_df'] = pd.DataFrame(columns=['timestamp', 'molmass', 'weight', 'height'])
 
 with st.form(key='element_form'):
     compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
     multiplier = st.number_input('Geben Sie die entsprechende Menge der chemischen Verbindung ein:', min_value=1, value=1)
+    weight = st.number_input('Geben Sie das Gewicht ein (kg):', min_value=0.0, value=0.0)
+    height = st.number_input('Geben Sie die Größe ein (m):', min_value=0.0, value=0.0)
     submit_button = st.form_submit_button(label='Berechnen')
 
 if submit_button:
@@ -35,15 +37,18 @@ if submit_button:
                 title='Molmasse der Elemente in der Verbindung'
             )
             st.altair_chart(chart, use_container_width=True)
+
+            # Speichere die berechneten Daten im Session-State
+            new_record = {
+                'timestamp': pd.Timestamp.now(),
+                'molmass': result['molar_mass'],
+                'weight': weight,
+                'height': height
+            }
+            st.session_state['data_df'] = st.session_state['data_df'].append(new_record, ignore_index=True)
         else:
             st.write(result['error'])
 
-        
-
-# Add a reset button to clear the input fieldss
+# Add a reset button to clear the input fields
 if st.button('Zurücksetzen'):
     st.experimental_rerun()
-
- # --- Save BMI data ---
-    from utils.data_manager import DataManager
-    DataManager().append_record(session_state_key='data_df', record_dict=result)  # update data in session state and storage

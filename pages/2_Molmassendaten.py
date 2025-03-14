@@ -8,26 +8,31 @@ import pandas as pd
 
 st.title('Molmassenwerte')
 
+# Überprüfen, ob die Daten im Session-State vorhanden sind
+if 'data_df' not in st.session_state:
+    st.error('Daten nicht gefunden. Bitte laden Sie die Daten auf der Startseite.')
+    st.stop()
+
 data_df = st.session_state['data_df']
 if data_df.empty:
     st.info('Keine Molmassen vorhanden. Berechnen Sie Ihre Molmasse auf der Startseite.')
     st.stop()
 
 # Überprüfe und bereinige die Daten
-if 'timestamp' in data_df.columns:
-    data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
-else:
-    st.error('Die Spalte "timestamp" fehlt in den Daten.')
+required_columns = ['timestamp', 'molmass', 'weight', 'height']
+missing_columns = [col for col in required_columns if col not in data_df.columns]
+
+if missing_columns:
+    st.error(f'Die folgenden Spalten fehlen in den Daten: {", ".join(missing_columns)}')
     st.stop()
 
-if 'molmass' in data_df.columns:
-    data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
-else:
-    st.error('Die Spalte "molmass" fehlt in den Daten.')
-    st.stop()
+data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
+data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
+data_df['weight'] = pd.to_numeric(data_df['weight'], errors='coerce')
+data_df['height'] = pd.to_numeric(data_df['height'], errors='coerce')
 
 # Entferne Zeilen mit ungültigen Daten
-data_df = data_df.dropna(subset=['timestamp', 'molmass'])
+data_df = data_df.dropna(subset=required_columns)
 
 # Sort dataframe by timestamp
 data_df = data_df.sort_values('timestamp', ascending=False)
