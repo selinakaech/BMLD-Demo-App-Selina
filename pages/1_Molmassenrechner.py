@@ -1,3 +1,8 @@
+# ====== Start Login Block ======
+from utils.login_manager import LoginManager
+LoginManager().go_to_login('Start.py') 
+# ====== End Login Block ======
+
 import streamlit as st
 import pandas as pd
 import altair as alt
@@ -38,3 +43,7 @@ if submit_button:
 # Add a reset button to clear the input fieldss
 if st.button('Zurücksetzen'):
     st.experimental_rerun()
+
+ # ---Save BMI data ---
+from utils.data_manager import DataManager
+DataManager().append_record(session_state_key='data_df', record_dict=result)  # update data in session state and storage
