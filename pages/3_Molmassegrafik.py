@@ -18,15 +18,14 @@ if data_df.empty:
     st.info('Keine Molmassen vorhanden. Berechnen Sie Ihre Molmasse auf der Startseite.')
     st.stop()
 
-# Molmasse über Zeit
-st.line_chart(data=data_df.set_index('timestamp')['molmass'], 
-                use_container_width=True)
-st.caption('Molmasse über Zeit (g/mol)')
-
-# Histogramm der Molmassenverteilung
-st.subheader('Verteilung der Molmassen')
+# Histogramm der Massen und Elemente
+st.subheader('Verteilung der Massen und Elemente')
 fig, ax = plt.subplots()
-ax.hist(data_df['molmass'], bins=20, edgecolor='black')
-ax.set_xlabel('Molmasse (g/mol)')
+elements = data_df['element'].unique()
+for element in elements:
+    element_data = data_df[data_df['element'] == element]
+    ax.hist(element_data['mass'], bins=20, alpha=0.5, label=element, edgecolor='black')
+ax.set_xlabel('Masse (g/mol)')
 ax.set_ylabel('Häufigkeit')
+ax.legend(title='Element')
 st.pyplot(fig)
