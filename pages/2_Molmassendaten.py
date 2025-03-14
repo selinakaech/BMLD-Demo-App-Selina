@@ -4,6 +4,7 @@ LoginManager().go_to_login('Start.py')
 # ====== End Login Block ======
 
 import streamlit as st
+import pandas as pd
 
 st.title('Molmassenwerte')
 
@@ -14,6 +15,13 @@ if data_df.empty:
 
 # Sort dataframe by timestamp
 data_df = data_df.sort_values('timestamp', ascending=False)
+
+# Überprüfe und bereinige die Daten
+data_df['timestamp'] = pd.to_datetime(data_df['timestamp'], errors='coerce')
+data_df['molmass'] = pd.to_numeric(data_df['molmass'], errors='coerce')
+
+# Entferne Zeilen mit ungültigen Daten
+data_df = data_df.dropna()
 
 # Display table
 st.dataframe(data_df)
