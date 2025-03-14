@@ -37,13 +37,20 @@ if submit_button:
 
             # Speichere die berechneten Daten im Session-State
             timestamp = pd.Timestamp.now()
+            new_records = []
             for element, mass in result['element_masses']:
                 new_record = {
                     'timestamp': timestamp,
                     'element': element,
                     'mass': mass
                 }
-                st.session_state['data_df'] = st.session_state['data_df'].append(new_record, ignore_index=True)
+                new_records.append(new_record)
+            
+            # Sicherstellen, dass data_df ein DataFrame ist
+            if not isinstance(st.session_state['data_df'], pd.DataFrame):
+                st.session_state['data_df'] = pd.DataFrame(columns=['timestamp', 'element', 'mass'])
+            
+            st.session_state['data_df'] = pd.concat([st.session_state['data_df'], pd.DataFrame(new_records)], ignore_index=True)
         else:
             st.write(result['error'])
 
