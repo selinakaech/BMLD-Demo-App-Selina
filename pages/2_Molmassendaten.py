@@ -37,11 +37,3 @@ data_df = data_df.sort_values('timestamp', ascending=False)
 
 # Display table
 st.dataframe(data_df)
-
-# Histogramm der Molmassenverteilung
-if 'mass' in data_df.columns:
-    st.subheader('Verteilung der Molmassen')
-    st.bar_chart(data_df['mass'])   # create a bar chart
-    st.caption('Molmasse (g/mol)')
-else:
-    st.error('Die Spalte "mass" fehlt in den Daten.')

@@ -7,13 +7,12 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from functions.Molmassen_Calculator import create_result_dict
-from utils.data_manager import DataManager
 
 st.title('Molmassenrechner')
 
 # Initialize the session state key if it doesn't exist
 if 'data_df' not in st.session_state:
-    st.session_state['data_df'] = pd.DataFrame()
+    st.session_state['data_df'] = pd.DataFrame(columns=['timestamp', 'element', 'mass'])
 
 with st.form(key='element_form'):
     compound = st.text_input('Geben Sie die chemische Verbindung ein (z.B. H2O):')
@@ -35,15 +34,19 @@ if submit_button:
                 title='Molmasse der Elemente in der Verbindung'
             )
             st.altair_chart(chart, use_container_width=True)
+
+            # Speichere die berechneten Daten im Session-State
+            timestamp = pd.Timestamp.now()
+            for element, mass in result['element_masses']:
+                new_record = {
+                    'timestamp': timestamp,
+                    'element': element,
+                    'mass': mass
+                }
+                st.session_state['data_df'] = st.session_state['data_df'].append(new_record, ignore_index=True)
         else:
             st.write(result['error'])
 
-        
-
-# Add a reset button to clear the input fieldss
+# Add a reset button to clear the input fields
 if st.button('Zurücksetzen'):
     st.experimental_rerun()
-
-# Save the result to the data_df
-    from utils.data_manager import DataManager
-    DataManager().append_record(session_state_key='data_df', record_dict=result)  # update data in session state and storage
