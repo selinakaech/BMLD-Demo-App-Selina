@@ -52,14 +52,15 @@ if submit_button:
                 st.session_state['data_df'] = pd.DataFrame(columns=['timestamp', 'element', 'mass'])
             
             st.session_state['data_df'] = pd.concat([st.session_state['data_df'], pd.DataFrame(new_records)], ignore_index=True)
+            DataManager().append_record(session_state_key='data_df', record_dict=result)
+
         else:
             st.write(result['error'])
 
 # Add a reset button to clear the input fields
-if st.button('Zurücksetzen'):
-    st.experimental_rerun()
+# if st.button('Zurücksetzen'):
+#     st.experimental_rerun()
 
-   # Speichern der Daten mit DataManager
-    DataManager().append_record(session_state_key='data_df', record_dict=result)
-    st.success("Die Daten wurden erfolgreich gespeichert!")
+#    Speichern der Daten mit DataManager
+#     st.success("Die Daten wurden erfolgreich gespeichert!")
  
