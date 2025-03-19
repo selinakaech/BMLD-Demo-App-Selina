@@ -7,6 +7,7 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from functions.Molmassen_Calculator import create_result_dict
+from utils.data_manager import DataManager
 
 st.title('Molmassenrechner')
 
@@ -59,5 +60,5 @@ if st.button('Zurücksetzen'):
     st.experimental_rerun()
 
 
-    from utils.data_manager import DataManager
+   
     DataManager().append_record(session_state_key='data_df', record_dict=result)
