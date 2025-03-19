@@ -15,7 +15,7 @@ if 'data_df' not in st.session_state:
 
 data_df = st.session_state['data_df']
 if data_df.empty:
-    st.info('Keine Molmassen vorhanden. Berechnen sie Ihre Molmasse auf der Startseite.')
+    st.info('Keine Molmassen vorhanden. Berechnen Sie Ihre Molmasse auf der Startseite.')
     st.stop()
 
 # Histogramm der Massen und Elemente

@@ -57,6 +57,3 @@ if submit_button:
 # Add a reset button to clear the input fields
 if st.button('Zurücksetzen'):
     st.experimental_rerun()
-
-from utils.data_manager import DataManager
-DataManager().append_record(session_state_key='data_df', record_dict=result)
