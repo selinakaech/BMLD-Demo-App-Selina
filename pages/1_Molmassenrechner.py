@@ -57,10 +57,5 @@ if submit_button:
         else:
             st.write(result['error'])
 
-# Add a reset button to clear the input fields
-# if st.button('Zurücksetzen'):
-#     st.experimental_rerun()
 
-#    Speichern der Daten mit DataManager
-#     st.success("Die Daten wurden erfolgreich gespeichert!")
  
