@@ -54,11 +54,10 @@ if submit_button:
         else:
             st.write(result['error'])
 
-    # Speichern der Daten mit DataManager
-    DataManager().append_record(session_state_key='data_df', record_dict=result)
-    st.success("Die Daten wurden erfolgreich gespeichert!")
-
 # Add a reset button to clear the input fields
 if st.button('Zurücksetzen'):
     st.experimental_rerun()
 
+# Speichern der Daten mit DataManager
+DataManager().append_record(session_state_key='data_df', record_dict=result)
+st.success("Die Daten wurden erfolgreich gespeichert!")
