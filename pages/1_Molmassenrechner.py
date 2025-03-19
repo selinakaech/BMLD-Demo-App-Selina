@@ -58,6 +58,6 @@ if submit_button:
 if st.button('Zurücksetzen'):
     st.experimental_rerun()
 
-# Speichern der Daten mit DataManager
+
+from utils.data_manager import DataManager
 DataManager().append_record(session_state_key='data_df', record_dict=result)
-st.success("Die Daten wurden erfolgreich gespeichert!")
